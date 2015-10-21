@@ -1,5 +1,4 @@
 """
-
 This is a short module designed to use human intelligence
 to fix error introduced by OCR.
 
@@ -11,7 +10,9 @@ We want to keep each word in its own context in the
 document. For example, humans will want to see the 15
 words before a word and the 15 words after a word.
 
-Three categories of errors:
+NGSL is used for the dictionary: http://www.newgeneralservicelist.org/
+
+Two Tests:
     a. A test for all Words == Dictionary Search (2 classes
             of errors)
         1. not elsewhere in document
@@ -33,17 +34,36 @@ Transcription error types:
     Add a letter
     (Any combination)
 
+What about grammar errors?
+    1. Exceptionally long sentences (over 15 words?)
+    2. Short sentences that lose commas or spaces.
+            This represents a much harder problem to discover.
+    3. Missing apostrophes and double quotes that don't close.
+            A whole pass could be dedicated to this.
+            This grammar error can be considered a spelling error.
+
+Preliminary Considerations:
+    We want to know a few things about our data:
+        1. Frequency of each word.
+        2. Context (given by the text).  It will be necessary
+            for us to look at 
+    Holding it all in memory? Yes, for now.
+        It's reasonable to keep the word frequency dictionary
+        in memory, but it's less reasonable to keep a whole
+        document of text in memory.  However, with modern
+        systems, a huge book is only a few megabytes, so we
+        can safely ignore this for now.
 """
+import pickle
 
-# current spec is a newline separated list of words.
-# all errors are feeding through review word right now.
-errorlog_filename = "errors.log"
 
-# The dictionary should be small and fast, use the
-# conversational english dictionary from class.
-dictionary = list()
+def unpickle_dictionary(dict_filename):
+    """ Simple utility to unpickle the NGSL dictionary.
+    """
+    with open(dict_filename, 'r') as f:
+        dictionary = pickle.load(f)
 
-every_word_in_the_document = list()
+    return dictionary
 
 
 def automated_review_word(word, dictionary, errorlog_filename):
@@ -54,10 +74,6 @@ def automated_review_word(word, dictionary, errorlog_filename):
     else:
         with open(errorlog_filename, 'a') as f:
             f.write(word) + os.linesep
-            
-
-
-
 
 
 def review_word(word):
@@ -68,4 +84,22 @@ def review_word(word):
     """
 
     print "===== NEXT WORD ======"
-    print "Is this word 
+    print "Is this word "
+
+if __name__ == "__main__":
+
+    # current spec is a newline separated list of words.
+    # all errors are feeding through review word right now.
+    errorlog_filename = "errors.log"
+
+    # The dictionary should be small and fast, use the
+    # conversational english dictionary from class.
+    dict_filename = "ngsl.pickle"
+
+    every_word_in_the_document = list()
+
+
+    dictionary = unpickle_dictionary(dict_filename)
+
+    print dictionary
+
