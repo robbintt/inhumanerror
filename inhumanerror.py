@@ -163,6 +163,7 @@ Preliminary Considerations:
         can safely ignore this for now.
 """
 import pickle
+import os
 
 
 def unpickle_dictionary(dict_filename):
@@ -210,19 +211,18 @@ if __name__ == "__main__":
     import lib.inargs
     input_filename, output_filename = lib.inargs.args.i, lib.inargs.args.o
 
-    # current spec is a newline separated list of words.
-    # all errors are feeding through review word right now.
-    errorlog_filename = "errors.log"
+    # import the document in question in order. This will
+    # need space separated so the reader can parse it.
+    # see the spec, don't use this next line
+    every_word_in_the_document = list()
 
     # The dictionary should be small and fast, use the
     # conversational english dictionary from class.
+    data_folder = "data"
     dict_filename = "ngsl.pickle"
-
-    # import the document in question in order. This will
-    # need space separated so the reader can parse it.
-    every_word_in_the_document = list()
+    dict_path_and_file = os.path.join(data_folder, dict_filename)
 
     # open up the New General Service List common english
     # words. Represents 95% of common english.
-    dictionary = unpickle_dictionary(dict_filename)
+    dictionary = unpickle_dictionary(dict_path_and_file)
 
