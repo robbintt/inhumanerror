@@ -63,6 +63,39 @@ def display_help():
 
     return messages
 
+def punctuation_stripper(word):
+    """ Strip punctuation from before or after a word.
+
+    This function is intended for use when identifying words.
+    In this project, all text mutation should be done by the human reviewer.
+    """
+    word = word.strip('\,.!?;"')
+
+    # strip enclosing single quotes if there is on on the left.
+    if word[0] = "'":
+        word = word.strip("'")     
+    else:
+        pass # don't strip a apostrophe representing plural ownership
+
+    return word
+
+
+
+
+def build_word_frequency_dict(source):
+    """ Build a word frequency dict from a source list of words.
+
+    Use a function that strips words of any leading or trailing punctuation.
+    """
+    word_frequency_dict = {}
+    for word in source:
+        word = punctuation_stripper(word)
+        times = word_frequency_dict.get(word, 0)
+        times += 1
+        word_frequency_dict[word] = times
+
+    return word_frequency_dict
+
 
 if __name__ == "__main__":
     """
@@ -87,12 +120,24 @@ if __name__ == "__main__":
     Currently the 'h' option draws help, but there's no option to redraw the current index.
     """
 
+    my_input_file = "sample.txt"
 
-    # some sample words, not used yet
+    with open(my_input_file, 'r') as f:
+        raw_text = f.read()
+
+    whitespaced_text = raw_text.split()
+    parsed_text_index, parsed_text = zip(*enumerate(whitespaced_text))
+
+    print parsed_text_index, parsed_text
+    print whitespaced_text
+
+    word_frequency_dict = build_word_frequency_dict(whitespaced_text)
+    # build_potential_errors(parsed_text_index, word_frequency_dict)
+
+    print word_frequency_dict
+
+    # an index tracks our place... it hasn't been implemented
     index = 0
-    mywords = list(range(100))
-
-
 
     # Curses Setup
     curses.initscr()
