@@ -206,6 +206,10 @@ def review_word(word):
 
 if __name__ == "__main__":
 
+    # boilerplate argparse code is broken out of main
+    import lib.inargs
+    input_filename, output_filename = lib.inargs.args.i, lib.inargs.args.o
+
     # current spec is a newline separated list of words.
     # all errors are feeding through review word right now.
     errorlog_filename = "errors.log"
