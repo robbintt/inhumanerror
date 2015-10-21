@@ -13,8 +13,13 @@ Navigation modes:
 
 
 Characters:
-    602 <
-    622 >
+    60 <
+    62 >
+    104 h
+    105 i
+    113 q  # currently handled by external loop
+    RIGHT_ARROW is a const in curses
+    LEFT_ARROW is a const in curses
 
 This navigator is designed to allow the user easy access
 
@@ -24,12 +29,12 @@ import curses
 from curses import KEY_LEFT, KEY_RIGHT
 
 curses.initscr()
+curses.noecho()
 
 win = curses.newwin(20,60,0,0)
 win.keypad(1)
-curses.noecho()
-win.border(0)
 win.nodelay(1)
+win.border(0)
 
 message1 = "This is the top line."
 message = "This is a message."
@@ -37,9 +42,9 @@ message = "This is a message."
 index = 0
 mywords = list(range(100))
 
-events = (602, 622, KEY_LEFT, KEY_RIGHT, 'i', 113)
+events = (60, 62, 104, 105, KEY_LEFT, KEY_RIGHT)
 
-event = ''
+event = -1
 while event != 113:
 
     prev_event = event
@@ -48,27 +53,50 @@ while event != 113:
     if event == -1:
         continue # This handles no new input for the nodelay(1) setting.
 
-    """
+    # redraw for ANY user input right now
+    win.clear()
+    win.border(0)
+
     if event in events:
-        # win.clear()
 
-        if event == 602:
-            # display important stuff.
-            win.addstr(1,1,message1)
-            win.addstr(2,1,message)
-            win.addstr(3,1,message)
-            win.addstr(4,1,message)
-            win.addstr(5,1,message)
-    """
+        # In this design, each function could return a list of strings.
+        # Those strings could be assigned to m1, m2, m3, m4, m5 (five messages)
+        if event == 60:
+            display_index_left()
+        elif event == 62:
+            display_index_right()
+        elif event == 104:
+            display_passage_left()
+        elif event == 105:
+            display_passage_right()
 
+        # This could be done for a list of strings over the index up to a max height.
+        # consider a message truncator for messages that are too long.
+        # you can easily truncate messages to length(=50) with win.addnstr(1,1,message,50)
+        win.addstr(1,1,m1)
+        win.addstr(2,1,m2)
+        win.addstr(3,1,m3)
+        win.addstr(4,1,m4)
+        win.addstr(5,1,m5)
+        win.refresh()
 
-    win.addch(18,58,event)
-    win.addstr(18,51,str(event))
+    # let the user know what they pressed.
+    win.addch(18,56,event)
+    #win.addstr(18,50,str(event)) # showes the integer for the event.
 
 curses.endwin()
 
 
-def navigator():
+def display_index_left():
+    pass
+
+def display_index_right():
+    pass
+
+def display_passage_left():
+    pass
+
+def display_passage_right():
     pass
 
 
