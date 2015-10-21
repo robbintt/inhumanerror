@@ -22,3 +22,12 @@ while answer not in ('y', 'n', 'q'):
     answer = raw_input("Is the OUTPUT filename correct: {} (y/n/q)".format(args.o,))
 if answer in ('n', 'q'):
     exit("Aborted.")
+
+if args.i == args.o:
+    answer = None
+    while answer not in ('y', 'n', 'q'):
+        print #  for your viewing pleasure, a newline
+        answer = raw_input("WARNING: The output and input files are the same. Is this OK? (y/n/q)".format(args.o,))
+    if answer in ('n', 'q'):
+        exit("Aborted.")
+
