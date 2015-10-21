@@ -1,8 +1,7 @@
 """
 Mock up the navigation aspects of inhumanerror.
 
-
-We'll use some a while loop that accepts stdin in real time.
+Curses supports color, so consider that.
 
 Navigation modes: 
     (right arrow) = next passage
@@ -12,6 +11,12 @@ Navigation modes:
     i = insert mode
     q = quit and apply changes
 
+
+Characters:
+    602 <
+    622 >
+
+This navigator is designed to allow the user easy access
 
 """
 import curses
@@ -27,19 +32,38 @@ win.border(0)
 win.nodelay(1)
 
 message1 = "This is the top line."
+message = "This is a message."
 
-key = ''
-while key != 113:
+index = 0
+mywords = list(range(100))
 
-    win.addstr(1,1,message1)
+events = (602, 622, KEY_LEFT, KEY_RIGHT, 'i', 113)
 
-    prevKey = key
+event = ''
+while event != 113:
+
+    prev_event = event
     event = win.getch()
+
     if event == -1:
-        pass
-    else:
-        key = event
-        win.addch(18,58,event)
+        continue # This handles no new input for the nodelay(1) setting.
+
+    """
+    if event in events:
+        # win.clear()
+
+        if event == 602:
+            # display important stuff.
+            win.addstr(1,1,message1)
+            win.addstr(2,1,message)
+            win.addstr(3,1,message)
+            win.addstr(4,1,message)
+            win.addstr(5,1,message)
+    """
+
+
+    win.addch(18,58,event)
+    win.addstr(18,51,str(event))
 
 curses.endwin()
 
