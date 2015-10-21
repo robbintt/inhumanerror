@@ -17,7 +17,6 @@ Steps
         Add each error index to the potential errors list.
         The POTENTIAL ERRORS LIST is a list of indexes that
         may have errors.
-
 4. Do a context check on short words.
         Rules:
             1. A short word is less than X characters (choose X)
@@ -27,6 +26,8 @@ Steps
         Q: What data source do we use for this?
         A: Use the document on itself, this may work because
                 author style may create a sufficient overlap. 
+        If a word fails a context check, add its index to the
+        POTENTIAL ERRORS LIST.
 
 
 Problems
@@ -54,7 +55,29 @@ Usability
 
 We want to keep each word in its own context in the 
 document. For example, humans will want to see the 15
-words before a word and the 15 words after a word.
+words before a word and the 15 words after a word (maybe
+less or more, but this is my initial guideline).
+
+Navigation should always be free of data entry. I do
+not know the best way to do this at a python raw input
+console. I guess we could enter insert mode with 'i',
+then exit insert mode with 'return'.  Users will want
+to be able to backspace, I think this is on raw_input
+by default.
+Navigation modes: 
+    n = next passage
+    p = previous passage
+    > = next index
+    < = previous index
+    i = insert mode
+    q = quit and apply changes
+
+When loading a file, the user must provide through argparse:
+    1. input file
+    2. output file
+The user should be asked to verify each filename (y/n/q)
+    y = continue
+    n, q = quit with message "Aborted by user (n or q)."
 
 Navigation between questionable passages is critical.
 Even after a passage has been fixed, the reviewer should
@@ -68,13 +91,26 @@ On viewing a passage a reviewer should see:
     4. reviewer fixed passage (if available)
     
     "Passage 34 out of 89 passages with potential errors.
+    ((
+    exception for free index view (<, >):
+    if passage not in POTENTIAL ERRORS LIST then:
+    "Word 190 out of 10920 total words." 
+    ))
     Raw: "Original Passage with errqrs, 30 words long"
-    Automated Error Detected: errqr
-    Fix: "Original Passage with errors, 30 words long"
-    (fix should be empty if there is no fix yet)
-    (fix should say <NO FIX REQUIRED> if it is ok.)
+    Current Word: errqr
+    Fix (if provided): error
+    Fix View: "Original Passage with errors, 30 words long"
+    PLEASE WRITE YOUR FIX WITH NO QUOTES
+    ALL PUNCTUATION WILL BE INCLUDED IN YOUR FIX
+    LEADING AND TRAILING WHITESPACE ARE TRUNCATED
+    >>>
 
-It would be nice to tap the right arrow or left arrow to see the next or previous passage.
+It would be nice to tap the right arrow or left arrow to 
+see the next or previous passage.
+It would also be nice to have a manual mode where the 
+reviewer can traverse the index of the document and view 
+each word similarly to the error review mode. In this case, 
+the language would need changed.
 
 Ideas
 =====
