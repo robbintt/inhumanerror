@@ -1,14 +1,86 @@
 """
+
+Steps
+=====
+1. Create a word frequency dictionary of the document.
+        This word frequency dictionary should follow
+        the same grammar subtracting rules as the
+        dictionary search used to identify spelling errors.
+2. Separate the document on whitespace and enumerate each word.
+        Punctuation is left in the word, it affects the
+        dictionary search and will be truncated inside that
+        module as needed
+        Enumeration gives an index for each word in the document.
+        An enumeration can be easily unzipped and zipped to get
+        an independent index if neceessary.
+3. Use the dictionary against the whitespace separated document
+        Add each error index to the potential errors list.
+        The POTENTIAL ERRORS LIST is a list of indexes that
+        may have errors.
+
+4. Do a context check on short words.
+        Rules:
+            1. A short word is less than X characters (choose X)
+            2. The word immediately before OR after the short
+                word must exist somewhere else in the document.
+                See the elephant example in this document.
+        Q: What data source do we use for this?
+        A: Use the document on itself, this may work because
+                author style may create a sufficient overlap. 
+
+
+Problems
+========
+If we let an author fix an entire passage, then we would
+have to deal with merge conflicts. Instead we can create
+a MANUAL ADD MODE, where an author can add an index to the
+POTENTIAL ERRORS LIST, allowing the author to then edit
+that index.
+It may be worth it to allow an author to remove an index
+from the potential errors list as well. May not be necessary
+though.
+
+Goals
+=====
 This is a short module designed to use human intelligence
-to fix error introduced by OCR.
+to fix errors introduced by OCR.
 
 In particular this script is designed to allow humans to
 quickly proofread questionable words in the output
 of Tesseract PDFs.
 
+Usability
+=========
+
 We want to keep each word in its own context in the 
 document. For example, humans will want to see the 15
 words before a word and the 15 words after a word.
+
+Navigation between questionable passages is critical.
+Even after a passage has been fixed, the reviewer should
+still be able to navigate backwards and forwards one
+passage at a time, back to that fixed passage.
+
+On viewing a passage a reviewer should see:
+    1. Passage Number out of / Passages to check
+    2. original passage
+    3. a summary of the computer error
+    4. reviewer fixed passage (if available)
+    
+    "Passage 34 out of 89 passages with potential errors.
+    Raw: "Original Passage with errqrs, 30 words long"
+    Automated Error Detected: errqr
+    Fix: "Original Passage with errors, 30 words long"
+    (fix should be empty if there is no fix yet)
+    (fix should say <NO FIX REQUIRED> if it is ok.)
+
+It would be nice to tap the right arrow or left arrow to see the next or previous passage.
+
+Ideas
+=====
+
+The list of letters allowed in english words is as follows:
+    A-Za-z'-    (The apostrophe and hyphen are treated as letters)
 
 NGSL is used for the dictionary: http://www.newgeneralservicelist.org/
 
@@ -68,6 +140,16 @@ def unpickle_dictionary(dict_filename):
 
 def automated_review_word(word, dictionary, errorlog_filename):
     """ Check if a word is in a list of words
+
+    This module needs to be able to accept words with
+    affixed punctuation and to remove that punctuation.
+
+    For this, we will give the reviewing human three things:
+    1. Original Context
+    2. Raw Word
+    3. Cleaned word, use a whitelist of characters: A-Za-z'-
+    This should allow the reader to make choices about the
+    passage.
     """
     if word in dictionary:
         return word
@@ -96,10 +178,11 @@ if __name__ == "__main__":
     # conversational english dictionary from class.
     dict_filename = "ngsl.pickle"
 
+    # import the document in question in order. This will
+    # need space separated so the reader can parse it.
     every_word_in_the_document = list()
 
-
+    # open up the New General Service List common english
+    # words. Represents 95% of common english.
     dictionary = unpickle_dictionary(dict_filename)
-
-    print dictionary
 
