@@ -31,7 +31,6 @@ This navigator is designed to allow the user easy access
 
 """
 import curses
-
 from curses import KEY_LEFT, KEY_RIGHT
 
 
@@ -66,10 +65,38 @@ def display_help():
 
 
 if __name__ == "__main__":
+    """
+    The control loop must maintain what index the user is currently on.
 
+    Index refers to what word in the passage the user is on.
+
+    A separate list of errors is maintained.
+
+    Each jump function can manipulate the index.
+
+    > will increment the index by 1 and redraw
+    < will decrement the index by 1 and redraw
+    left arrow will find the next lowest potential error index and redraw
+    right arrow will find the next highest potential error index and redraw
+
+    The index can then be increased or decreased based on the input the user gives.
+
+    When the user uses 'i' the screen must be redrawn and input must be taken on
+    the current index.
+    
+    Currently the 'h' option draws help, but there's no option to redraw the current index.
+    """
+
+
+    # some sample words, not used yet
+    index = 0
+    mywords = list(range(100))
+
+
+
+    # Curses Setup
     curses.initscr()
     curses.noecho()
-
     win = curses.newwin(20,60,0,0)
     win.keypad(1)
     win.nodelay(1)
@@ -77,12 +104,7 @@ if __name__ == "__main__":
     # always display help at bottom.
     win.addstr(18,1,"Press 'h' for help.")
 
-    # some sample words, not used yet
-    index = 0
-    mywords = list(range(100))
-
     events = (60, 62, 104, 105, KEY_LEFT, KEY_RIGHT)
-
     event = -1
     while event != 113:
 
@@ -98,8 +120,7 @@ if __name__ == "__main__":
 
         if event in events:
 
-            # In this design, each function could return a list of strings.
-            # all displays are views, except 'i'
+            # messages is used to provide actual input.
             messages = list()
             if event == 60:
                 display_index_left()
@@ -114,13 +135,12 @@ if __name__ == "__main__":
             elif event == 105:
                 enter_insert_mode()
 
-            # This could be done for a list of strings over the index up to a max height.
-            # consider a message truncator for messages that are too long.
-            # you can easily truncate messages to length(=50) with win.addnstr(1,1,message,50)
+            # Add up to 10 messages, truncating after 58 characters.
             for i, message in enumerate(messages):
                 if i > 10:
                     break
-                win.addstr(i,1,message)
+                win.addnstr(i,1,message, 58)
+                # win.addstr(i,1,message)
 
         ### THIS IS THE BOTTOM DISPLAY OF THE WINDOW
         # always display help at bottom.
