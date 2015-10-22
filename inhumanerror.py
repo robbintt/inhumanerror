@@ -1,5 +1,50 @@
 """
 
+Input format
+============
+It looks like the input format might be hocr, which means we'll need
+to devise some sort of manual parser to generate a temporary plaintext
+file to work with in Python. That temporary file will need to be mapped
+back onto the hocr format.  This will play heavily into how mapping
+results back onto the input format is managed.
+
+Mapping changes back onto the original file
+===========================================
+
+We work with a few indexes. The document_index will let us map changes
+back onto the base document without losing meaningful whitespace.
+
+This relies on the document being mappable to characters, e.g. a text file.
+Furthermore we may need to depart from the whitespace delimited tokens
+if the OCR software doesn't provide an amenable format.
+
+document_index = index of the document being worked on. When we tokenize
+                    the document by using the whitespace splitter, we want
+                    to keep the document_index of the start of that word.
+                    This allows us to map the changes back onto the 
+                    document_index of that word.  
+                    
+                    1st tricky piece: 
+                    how do we get the document index of the start of each word 
+                    when we are doing the splitting?
+                    i could write a manual split function, tracking the whitespace.
+                    I could split one at a time from back to front, recording the 
+                    index of each split.
+                    1. reverse the string
+                    2. split the string with maxsplit=1
+                    3. (if you think on this it might work)
+
+                    2nd Tricky piece:
+                    This will be a little tricky because
+                    we are NOT guaranteed that the new word
+                    will be the same length as the old string.
+                    It is easy enough to apply the changes last to first
+                    (highest to lowest index) in order to preserve the index
+                    for unchanged words as changes are made.
+
+
+
+
 Steps
 =====
 1. Create a word frequency dictionary of the document.

@@ -3,8 +3,16 @@ Mock up the navigation aspects of inhumanerror.
 
 Curses supports color, so consider that.
 
-This needs a context manager.
+This needs a context manager! If curses breaks, it screws up the terminal.
 
+
+TODO:
+
+    Make a view method for viewing the current index.  The four navigation
+    methods simply update the index by incrementing or decrementing by 1 or
+    the amount to the next potential error, then they show this view method.
+    The same view method should also be used when starting up (view the first
+    potential error), and when leaving the help screen (view the current index).
 
 
 Options
